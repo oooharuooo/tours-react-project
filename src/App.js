@@ -1,11 +1,43 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Loading from './Loading'
 import Tours from './Tours'
-// ATTENTION!!!!!!!!!!
-// I SWITCHED TO PERMANENT DOMAIN
 const url = 'https://course-api.com/react-tours-project'
+
+
 function App() {
-  return <h2>Tours Project Setup</h2>
+  const [isLoading,setIsLoading] = useState(true);
+  const [toursData,setToursData] = useState([]);
+  
+
+  const fetchData = async () => {
+      const {data} = await axios.get(url);
+      setToursData(data);
+      setIsLoading(false);
+  }
+
+  const removeTours = (id) => {
+      const newTour = toursData.filter(tour => tour.id !== id)
+      setToursData(newTour);
+  }
+
+  const refreshTour = () => {
+    fetchData();
+  }
+
+  useEffect(() => {
+    fetchData();
+  },[] )
+
+  return (
+    <main>
+      <section>
+            {isLoading ? <Loading /> : 
+              <Tours toursData={toursData} removeTours={removeTours} refreshTour={refreshTour} />
+            }
+      </section>
+    </main>
+  )
 }
 
 export default App
